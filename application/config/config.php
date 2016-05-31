@@ -375,6 +375,9 @@ $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;
 
+//MODIFIED VALUES FROM DEFAULT SETTINGS
+$config['sess_encrypt_cookie'] = TRUE;
+
 /*
 |--------------------------------------------------------------------------
 | Cookie Related Variables
