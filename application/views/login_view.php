@@ -6,7 +6,7 @@
 <body>
 	<h1>NLP Tools Login</h1>
 	<?php echo validation_errors(); ?>
-	<?php echo form_open('verifylogin'); ?>
+	<?php echo form_open('Verifylogin'); ?>
 
 		<fieldset>
 			<legend>Login</legend>

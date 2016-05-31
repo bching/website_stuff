@@ -1,7 +1,7 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class VerifyLogin extends CI_Controllers{
-	public function __contruct(){
+class Verifylogin extends CI_Controller{
+	public function __construct(){
 		parent::__construct();
 		$this->load->model('user_model', '', TRUE);
 	}
@@ -9,8 +9,8 @@ class VerifyLogin extends CI_Controllers{
 	public function index(){
 		$this->load->library('form_validation');
 		//Checking for these fields being filled
-		$this->form_validation->set_rules('username', 'Username', 'trim|required|xss_clean');
-		$this->form_validation->set_rules('password', 'Password', 'trim|required|xss_clean|callback_check_database');
+		$this->form_validation->set_rules('username', 'Username', 'trim|required');
+		$this->form_validation->set_rules('password', 'Password', 'trim|required|callback_check_database');
 
 		//Apply validation rules
 		if($this->form_validation->run() == FALSE){
@@ -18,7 +18,7 @@ class VerifyLogin extends CI_Controllers{
 			$this->load->view('login_view');
 		}
 		else{
-			redirect('home', 'refresh');
+			redirect('home_ctrl', 'refresh');
 		}
 	}
 

@@ -1,8 +1,8 @@
 <?php
-class Login_Ctrl extends CI_Controller{
+class Login_ctrl extends CI_Controller{
 
-	public function __contruct(){
-		parent::__contruct();
+	public function __construct(){
+		parent::__construct();
 	}
 
 	public function index(){

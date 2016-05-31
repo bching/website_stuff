@@ -1,10 +1,14 @@
 <?php
 
-class User_Model extends CI_Model{
+class User_model extends CI_Model{
 
-	function login($username, $password){
+//	public function __construct(){
+//		parent::__construct();
+//	}
+
+	public function login($username, $password){
 		$this->db->select('email, username, hash_pass');
-		$this->db->select->from('Users');
+		$this->db->from('Users');
 		//TODO: SELECT directory path table for user here 
 		$this->db->where('username', $username);
 		$this->db->where('hash_pass', $password);
