@@ -18,7 +18,7 @@ class User extends CI_Model{
 			'role' => $this->roles[0],
 			'status' => $this->status[0]
 		);
-		$userIn= $this->db->insert_string('usersTable', $string);
+		$userIn= $this->db->insert_string('users', $string);
 		$this->db->query($userIn);
 		return $this->db->insert_id();
 	}
