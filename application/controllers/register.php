@@ -24,7 +24,7 @@ class Register extends CI_Controller{
 		else{
 			if($this->user->isDuplicate($this->input->post('email'))){
 				$this->session->set_flashdata('flash_message', 'User email already exists');
-				redirect(site_url().'register');
+				redirect(site_url().'/register');
 			}
 			else{
 				//Insert user into tempUser table
@@ -34,7 +34,7 @@ class Register extends CI_Controller{
 				$token = $this->user->insertToken($id);
 
 				$qstring = base64_encode($token);
-				$url = site_url() . '/complete/token/' . $qstring;
+				$url = site_url() . 'complete/token/' . $qstring;
 				$link = '<a href="' . $url . '">' . $url . '</a>';
 
 				$message = '';

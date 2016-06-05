@@ -62,6 +62,19 @@ class User extends CI_Model{
 			return false;
 		}
 	}
+
+	public function isTokenValid($token){
+		$q = $this->db->get_where('tokens', array('token' => $token), 1);
+		if($this->db->affected_rows() > 0){
+			$row = $q->row();
+
+			//set to user registered date
+			$created = $row->created;
+			$createdTimeStamp = strtotime($created);
+			//TODO: get current time format it to a date and test for >= 24 hours
+			//$from_time = strtotime(
+		}
+	}
 	
 	
 

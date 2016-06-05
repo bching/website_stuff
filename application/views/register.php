@@ -1,7 +1,11 @@
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>User Registration</title>
+	<style>
+		#warning{ color: red; font-weight: bold; }
+	</style>
 </head>
 <body>
 <h1>New User</h1>
@@ -22,6 +26,14 @@
 		<div class='container'>
 			<input type="submit" value="Register"/>
 		</div>
+		<?php $arr = $this->session->flashdata(); 
+			if(!empty($arr['flash_message'])){
+				$html = '<p id="warning">';
+				$html .= $arr['flash_message'];
+				$html .= '</p>';
+				echo $html;
+			}
+		?>
 	</fieldset>
 </body>
 </html>
