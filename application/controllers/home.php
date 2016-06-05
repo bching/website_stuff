@@ -1,5 +1,5 @@
 <?php if(!defined('BASEPATH')) exit('No direct script access allowed');
-class Home_ctrl extends CI_Controller{
+class Home extends CI_Controller{
 	public function __construct(){
 		parent::__construct();
 	}
@@ -8,17 +8,17 @@ class Home_ctrl extends CI_Controller{
 		if($this->session->userdata('logged_in')){
 			$session_data = $this->session->userdata('logged_in');
 			$data['username'] = $session_data['username'];
-			$this->load->view('home_view', $data);
+			$this->load->view('home', $data);
 		}
 		else{
 			//If no session redirect back to login
-			redirect('login_ctrl', 'refresh');
+			redirect('login', 'refresh');
 		}
 	}
 
 	public function logout(){
 		$this->session->unset_userdata('logged_in');
 		session_destroy();
-		redirect('home_ctrl', 'refresh');
+		redirect('home', 'refresh');
 	}
 }

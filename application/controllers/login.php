@@ -1,5 +1,5 @@
 <?php
-class Login_ctrl extends CI_Controller{
+class Login extends CI_Controller{
 
 	public function __construct(){
 		parent::__construct();
@@ -7,7 +7,7 @@ class Login_ctrl extends CI_Controller{
 
 	public function index(){
 		$this->load->helper(array('form'));
-		$this->load->view('login_view');
+		$this->load->view('login');
 	}
 
 }

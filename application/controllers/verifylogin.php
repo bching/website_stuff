@@ -3,22 +3,21 @@
 class Verifylogin extends CI_Controller{
 	public function __construct(){
 		parent::__construct();
-		$this->load->model('user_model', '', TRUE);
+		$this->load->model('user', '', TRUE);
+		$this->load->library('form_validation');
 	}
 
 	public function index(){
-		$this->load->library('form_validation');
 		//Checking for these fields being filled
 		$this->form_validation->set_rules('username', 'Username', 'trim|required');
 		$this->form_validation->set_rules('password', 'Password', 'trim|required|callback_check_database');
-
 		//Apply validation rules
 		if($this->form_validation->run() == FALSE){
 			//Return the same view for failed validation
-			$this->load->view('login_view');
+			$this->load->view('login');
 		}
 		else{
-			redirect('home_ctrl', 'refresh');
+			redirect('home', 'refresh');
 		}
 	}
 
@@ -27,7 +26,7 @@ class Verifylogin extends CI_Controller{
 		$username = $this->input->post('username');
 
 		//query the database in login function of user_model class
-		$result = $this->user_model->login($username, $password);
+		$result = $this->user->login($username, $password);
 		if($result){
 			$sess_array = array();
 			foreach($result as $row){

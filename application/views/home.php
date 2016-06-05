@@ -42,10 +42,10 @@
 	<h1>Home</h1>
 	<h2>Welcome <?php echo $username; ?></h2><br/>
 	<ul>
-		<li><a href="raw_ctrl/index">Raw Uploads</a></li>
-		<li><a href="preproc_ctrl/index">Preprocessed Uploads</a></li>
-		<li><a href="semantic_ctrl/index">Semantic Networks</a></li>
-		<li><a href="home_ctrl/logout">Logout</a></li>
+		<li><a href="<?php echo site_url(); ?>/raw">Raw Uploads</a></li>
+		<li><a href="preprocess">Preprocessed Uploads</a></li>
+		<li><a href="semantic">Semantic Networks</a></li>
+		<li><a href="home_ctrl">Logout</a></li>
 	</ul>
 </body>
 </html>
