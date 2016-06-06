@@ -28,7 +28,7 @@ class User extends CI_Model{
 		return $this->db->affected_rows() > 0 ? TRUE : FALSE;
 	}
 
-	public function insertToken($userId){
+	public function insertToken($user_id){
 		//$token is just for validating a user
 		//$date is used to fill in created column of 'tokens'
 		//to perform a dateDiff to see validated in appropriate time frame
@@ -37,7 +37,7 @@ class User extends CI_Model{
 
 		$string = array(
 			'token' => $token,
-			'userId' => $userId,
+			'user_id' => $user_id,
 			'created' => $date
 		);
 		$query = $this->db->insert_string('tokens', $string); 
@@ -45,36 +45,106 @@ class User extends CI_Model{
 		return $token;
 	}
 
-	public function login($username, $password){
-		$this->db->select('email, username, hash_pass');
-		$this->db->from('Users');
-		//TODO: SELECT directory path table for user here 
-		$this->db->where('username', $username);
-		$this->db->where('hash_pass', $password);
-		$this->db->limit(1);
+	public function isTokenValid($token){
+		$q = $this->db->get_where('tokens', array('token' => $token), 1);
 
-		$query = $this->db->get();
+		if($this->db->affected_rows() > 0){
+			$row = $q->row();
 
-		if($query->num_rows() == 1) {
-			return $query->result();
+			//set to user registered date
+			$created = $row->created;
+			$created_time = strtotime($created);
+			$now = time();
+			$now_time = strtotime($now);
+			$time_diff = ($now_time - $created_time)/60/60;
+			
+			if($time_diff >= 24){
+				return false;
+			}
+
+			$user_info = $this->getUserInfo($row->user_id);
+			return $user_info;
 		}
 		else{
 			return false;
 		}
 	}
 
-	public function isTokenValid($token){
-		$q = $this->db->get_where('tokens', array('token' => $token), 1);
-		if($this->db->affected_rows() > 0){
-			$row = $q->row();
 
-			//set to user registered date
-			$created = $row->created;
-			$createdTimeStamp = strtotime($created);
-			//TODO: get current time format it to a date and test for >= 24 hours
-			//$from_time = strtotime(
+	public function updateUserInfo($post, $dir){
+		$data = array(
+			'password' => $post['password'],
+			'last_login' => date('Y-m-d h:i:s A'),
+			'status' => $this->status[1],
+			'file_dir' => $dir
+		);
+		$this->db->where('id', $post['user_id']);
+		$this->db->update('users', $data);
+		$success = $this->db->affected_rows();
+
+		if(!$success && mkdir($dir, 0777)){
+			error_log('Unable to updateUserInfo('.$post['user_id'].')');
+			return false;
+		}
+
+		$user_info = $this->getUserInfo($post['user_id']);
+		return $user_info;
+	}
+
+	public function getUserInfo($id){
+		$query = $this->db->get_where('users', array('id' => $id), 1);
+		if($this->db->affected_rows() > 0){
+			$user_info = $query->row();
+			return $user_info;
+		}
+		else{
+			error_log('No user found getUserInfo('.$id.')');
+			return false;
 		}
 	}
+
+	public function checkLogin($login_info){
+		//$this->load->library('password');
+		$this->db->select('*');
+		$this->db->where('email', $login_info['email']);
+		$query = $this->db->get('users');
+		$user_info = $query->row();
+
+		//if(!$this->password->validate_password($login_info['password'], $user_info->password)){
+		if(password_verify($login_info['password'], $user_info['password'])){
+			error_log('Incorrect password ('.post['email'].')'); 
+			return false;
+		}
+
+		$this->updateLoginTime($user_info['id']);
+		unset($user_info['password']);
+		return $user_info;
+	}
+
+	public function updateLoginTime($id){
+		$this->db->where('id', $id);
+		$this->db->update('users', array('last_login' => date('Y-m-d h:i:s A')));
+		return;
+	}
+
+//	public function login($username, $password){
+//		$this->db->select('email, username, hash_pass');
+//		$this->db->from('Users');
+//		//TODO: SELECT directory path table for user here 
+//		$this->db->where('username', $username);
+//		$this->db->where('hash_pass', $password);
+//		$this->db->limit(1);
+//
+//		$query = $this->db->get();
+//
+//		if($query->num_rows() == 1) {
+//			return $query->result();
+//		}
+//		else{
+//			return false;
+//		}
+//	}
+
 	
 	
 

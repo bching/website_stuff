@@ -9,26 +9,31 @@ class Complete extends CI_Controller{
 
 	public function index(){
 		$this->load->helper(array('form'));
-		$this->load->view('complete');
+		if(empty($this->session->userdata['email'])){
+			$this->session->set_flashdata('flash_message', 'email not in userdata');
+			redirect(site_url() . 'login');
+		}
+		$data = $this->session->userdata;
+		$this->load->view('complete', $data);
 	}
 
 	public function completeReg(){
 		//uri->segment() returns the vector value contained in the url at position indicated
 		//this can differ depending on if showing index.php in url or not
-		$token = base64_decode($this->uri->segment(5));
+		$token = base64_decode($this->uri->segment(4));
 		$cleanToken = $this->security->xss_clean($token);
 
 		//return false or user value array from corresponding token value
 		$user_info = $this->user->isTokenValid($cleanToken);
 
-		$if(!$user_info){
+		if(!$user_info){
 			$this->session->set_flashdata('flash_message', 'Token is invalid or expired');
 			redirect(site_url());
 		}
 		$data = array(
 			'firstName' => $user_info->firstName,
 			'email' => $user_info->email,
-			'user_id' => $user_info->user_id,
+			'user_id' => $user_info->id,
 			'token' => base64_encode($token)
 		);
 
@@ -43,10 +48,14 @@ class Complete extends CI_Controller{
 
 			$cleanPost = $this->security->xss_clean($post);
 
-			$hashed = password_hash($cleanPost['password']);
+			$hashed = password_hash($cleanPost['password'], PASSWORD_BCRYPT);
 			$cleanPost['password'] = $hashed;
 			unset($cleanPost['passconf']);
-			$userInfo = $this->user->updateUserInfo($cleanPost);
+
+			//$dir_path = '/Applications/MAMP/htdocs/website_stuff/application/users' . $user_info->email;
+			$dir_path = $_SERVER["DOCUMENT_ROOT"] .'/'. $user_info->email;
+
+			$userInfo = $this->user->updateUserInfo($cleanPost, $dir_path);
 			if(!$userInfo){
 				$this->session->set_flashdata('flash_message', 'There was a problem updating your user info');
 				redirect(site_url() . 'login');
@@ -57,6 +66,8 @@ class Complete extends CI_Controller{
 			foreach($userInfo as $key=>$val){
 				$this->session->set_userdata($key, $val);
 			}
+			$this->session->set_flashdata('flash_message', 'Redirect to home');
+			redirect(site_url().'/home');
 			
 		}
 	}

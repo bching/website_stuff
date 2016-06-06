@@ -10,21 +10,21 @@ class Register extends CI_Controller{
 	public function index(){
 		$this->load->helper(array('form'));
 		$this->load->view('register');
-		$this->form_validation->set_rules('firstName', 'Firstname', 'required');
-		$this->form_validation->set_rules('lastName', 'Lastname', 'required');
-		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
 	}
 
 	public function registerUser(){
-
+		$this->form_validation->set_rules('firstName', 'Firstname', 'required');
+		$this->form_validation->set_rules('lastName', 'Lastname', 'required');
+		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
 		if($this->form_validation == FALSE){
-			$this->load->view('register');
+			$this->session->set_flashdata('flash_message', 'Form validation error');
+			redirect(site_url().'register');
 		}
 		//FOrm is filled out properly
 		else{
 			if($this->user->isDuplicate($this->input->post('email'))){
 				$this->session->set_flashdata('flash_message', 'User email already exists');
-				redirect(site_url().'/register');
+				redirect(site_url().'register');
 			}
 			else{
 				//Insert user into tempUser table
@@ -34,14 +34,15 @@ class Register extends CI_Controller{
 				$token = $this->user->insertToken($id);
 
 				$qstring = base64_encode($token);
-				$url = site_url() . 'complete/token/' . $qstring;
+				$url = site_url() . '/complete/completeReg/token/' . $qstring;
 				$link = '<a href="' . $url . '">' . $url . '</a>';
 
 				$message = '';
 				$message .= '<strong>Click the link below to finish registration</strong><br/>';
 				$message .= $link;
 
-				echo $message; //send in email function
+				//TODO: Send $message through mail()
+				echo $message; 
 				exit;
 			}
 		}

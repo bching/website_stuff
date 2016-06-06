@@ -40,7 +40,7 @@
 </head>
 <body>
 	<h1>Home</h1>
-	<h2>Welcome <?php echo $username; ?></h2><br/>
+	<h2>Welcome <?php echo $firstName; ?></h2><br/>
 	<ul>
 		<li><a href="<?php echo site_url(); ?>/raw">Raw Uploads</a></li>
 		<li><a href="preprocess">Preprocessed Uploads</a></li>

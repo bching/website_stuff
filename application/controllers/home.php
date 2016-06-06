@@ -12,6 +12,7 @@ class Home extends CI_Controller{
 		}
 		else{
 			//If no session redirect back to login
+			//TODO:this redirect location is temporary for testing purposes
 			redirect('login', 'refresh');
 		}
 	}
