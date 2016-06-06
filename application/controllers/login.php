@@ -15,8 +15,7 @@ class Login extends CI_Controller{
 
 	public function verifyLogin(){
 		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
-		$
-			$this->form_validation->set_rules('password', 'Password', 'required');
+		$this->form_validation->set_rules('password', 'Password', 'required');
 
 		if($this->form_validation->run() == FALSE){
 			$this->load->view('login');
@@ -32,10 +31,11 @@ class Login extends CI_Controller{
 				redirect(site_url() . 'login');
 			}
 			//save each column value for user row id in session
-			foreach($user_info as $key => $val){
-				$this->session->set_userdata($key, $val);
-			}
-			redirect(site_url() . 'home');
+			//foreach($user_info as $key => $val){
+			//	$this->session->set_userdata($key, $val);
+			//}
+			$this->session->set_userdata('logged_in', $user_info);
+			redirect(site_url() . '/home');
 		}
 	}
 

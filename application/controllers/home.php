@@ -7,8 +7,9 @@ class Home extends CI_Controller{
 	public function index(){
 		if($this->session->userdata('logged_in')){
 			$session_data = $this->session->userdata('logged_in');
-			$data['username'] = $session_data['username'];
-			$this->load->view('home', $data);
+			//$data['username'] = $session_data['email'];
+			//$this->load->view('home', $data);
+			$this->load->view('home');
 		}
 		else{
 			//If no session redirect back to login

@@ -53,12 +53,13 @@ class Complete extends CI_Controller{
 			unset($cleanPost['passconf']);
 
 			//$dir_path = '/Applications/MAMP/htdocs/website_stuff/application/users' . $user_info->email;
-			$dir_path = $_SERVER["DOCUMENT_ROOT"] .'/'. $user_info->email;
+			//$dir_path = $_SERVER["DOCUMENT_ROOT"] .'/'. $user_info->email;
+			$dir_path = '/Users/stc1563/users-uaa/' . $user_info->email;
 
 			$userInfo = $this->user->updateUserInfo($cleanPost, $dir_path);
 			if(!$userInfo){
 				$this->session->set_flashdata('flash_message', 'There was a problem updating your user info');
-				redirect(site_url() . 'login');
+				redirect(site_url() . '/login');
 			}
 
 			unset($userInfo->password);

@@ -72,6 +72,14 @@ class User extends CI_Model{
 
 
 	public function updateUserInfo($post, $dir){
+		$oldmask = umask(0);
+		if(!@mkdir($dir, 0777)){
+			$error = error_get_last();
+			echo $error['message'];
+			return false;
+		}
+		umask($oldmask);
+		
 		$data = array(
 			'password' => $post['password'],
 			'last_login' => date('Y-m-d h:i:s A'),
@@ -82,7 +90,7 @@ class User extends CI_Model{
 		$this->db->update('users', $data);
 		$success = $this->db->affected_rows();
 
-		if(!$success && mkdir($dir, 0777)){
+		if(!$success){
 			error_log('Unable to updateUserInfo('.$post['user_id'].')');
 			return false;
 		}
@@ -111,13 +119,13 @@ class User extends CI_Model{
 		$user_info = $query->row();
 
 		//if(!$this->password->validate_password($login_info['password'], $user_info->password)){
-		if(password_verify($login_info['password'], $user_info['password'])){
-			error_log('Incorrect password ('.post['email'].')'); 
+		if(!password_verify($login_info['password'], $user_info->password)){
+			error_log('Incorrect password ('.$login_info['email'].')'); 
 			return false;
 		}
 
-		$this->updateLoginTime($user_info['id']);
-		unset($user_info['password']);
+		$this->updateLoginTime($user_info->id);
+		unset($user_info->password);
 		return $user_info;
 	}
 
