@@ -13,7 +13,7 @@
 		$file_path .= "/". $file_dir_token ."/". $file_name;
 		$url = site_url() . '/raw_uploads/display_file' . $file_path;
 		//$file_handle = fopen($file_dir, "r");
-		echo '<a href="'.$url.'">'.$file_name.'</a>' ;
+		echo '<a href="'.$url.'">'.$file_name.'</a><br/>' ;
 		
 	}
 	echo '</ul>';
