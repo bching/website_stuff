@@ -70,7 +70,6 @@ class User extends CI_Model{
 		}
 	}
 
-
 	public function updateUserInfo($post, $dir){
 		$oldmask = umask(0);
 		if(!@mkdir($dir, 0777)){
@@ -125,6 +124,7 @@ class User extends CI_Model{
 		}
 
 		$this->updateLoginTime($user_info->id);
+
 		unset($user_info->password);
 		return $user_info;
 	}

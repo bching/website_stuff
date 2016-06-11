@@ -8,7 +8,6 @@ class Login extends CI_Controller{
 	}
 
 	public function index(){
-		//$this->session->sess_destroy();
 		$this->load->helper(array('form'));
 		$this->load->view('login');
 	}
@@ -30,11 +29,12 @@ class Login extends CI_Controller{
 				$this->session->set_flashdata('flash_message', 'The login was unsuccessful');
 				redirect(site_url() . 'login');
 			}
+			$key = 'logged_in';
+			$this->session->set_userdata('logged_in', TRUE);
 			//save each column value for user row id in session
-			//foreach($user_info as $key => $val){
-			//	$this->session->set_userdata($key, $val);
-			//}
-			$this->session->set_userdata('logged_in', $user_info);
+			foreach($user_info as $key => $val){
+				$this->session->set_userdata($key, $val);
+			}
 			redirect(site_url() . '/home');
 		}
 	}
