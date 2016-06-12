@@ -14,7 +14,6 @@
 		$url = site_url() . '/raw_uploads/display_file' . $file_path;
 		//$file_handle = fopen($file_dir, "r");
 		echo '<a href="'.$url.'">'.$file_name.'</a><br/>' ;
-		
 	}
 	echo '</ul>';
 	?>

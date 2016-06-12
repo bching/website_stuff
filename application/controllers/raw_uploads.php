@@ -15,8 +15,10 @@ class Raw_uploads extends CI_Controller{
 			$file_dir = $data['file_dir'];
 			$files = scandir($file_dir);
 
-			//I want to encode the file_dir and decode it from the uri read in display_file
-			//so we don't expose directory structure to user
+			/*
+			 * I want to encode the file_dir and decode it from the uri read in 
+			 * display_file so we don't expose directory structure to user 
+			 */
 			$file_dir_token = base64_encode($file_dir);
 			$file_dir_token = rtrim($file_dir_token, '=');
 			$user_info = array('files' => $files, 
@@ -38,7 +40,13 @@ class Raw_uploads extends CI_Controller{
 		$file_handle = fopen($file_path, "r");
 		$file_contents = fread($file_handle, filesize($file_path));
 		fclose($file_handle);
-		echo $file_contents;
+
+		$text_data = array('raw_text' => $file_contents);
+		$this->load->view('display_raw', $text_data);
+		//echo '<textarea name="raw_file"> $file_contents;
+	}
+
+	public function preprocess_text(){
 	}
 
 	public function do_upload(){
