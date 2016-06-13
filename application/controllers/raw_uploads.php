@@ -42,11 +42,10 @@ class Raw_uploads extends CI_Controller{
 		fclose($file_handle);
 
 		$text_data = array('raw_text' => $file_contents);
-		$this->load->view('display_raw', $text_data);
-		//echo '<textarea name="raw_file"> $file_contents;
+		$this->load->view('preprocess', $text_data);
 	}
 
-	public function preprocess_text(){
+	public function preprocess(){
 	}
 
 	public function do_upload(){
