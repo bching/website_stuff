@@ -49,7 +49,9 @@ class Raw_uploads extends CI_Controller{
 	}
 
 	public function do_upload(){
-		$config['upload_path'] = '/Users/stc1563/users-uaa/';
+		$data = $this->session->userdata;
+		$email = $data['email'];
+		$config['upload_path'] = '/Users/stc1563/users-uaa/' . $email;
 	}
 }
 /* End of file raw_uploads.php */

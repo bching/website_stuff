@@ -4,9 +4,13 @@
 	<link rel="stylesheet" href="/website_stuff/assets/css/menuStyle.css" type="text/css" />
 	<title>Raw Uploads</title>
 <body>
-	<?php include 'navi.php'; ?>
+<?php include 'navi.php'; ?>
+<?php echo form_open_multipart('raw_uploads/do_upload'); ?>
+<input type="file" name="raw_file" id="raw_file">
+<input type="submit" value="Upload Raw Text" name="submit">
+<?php form_close(); ?>
+<br/><br/>
 <?php 
-	//$files = scandir($file_dir);
 	echo '<ul>';
 	foreach($files as $file => $file_name){
 		$file_path = '';
@@ -16,6 +20,6 @@
 		echo '<a href="'.$url.'">'.$file_name.'</a><br/>' ;
 	}
 	echo '</ul>';
-	?>
+?>
 </body>
 </html>
