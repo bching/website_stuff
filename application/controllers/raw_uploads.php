@@ -46,6 +46,18 @@ class Raw_uploads extends CI_Controller{
 	}
 
 	public function preprocess(){
+		$this->form_validation->set_rules('tokenize', 'Tokenize', 'required');
+
+		if($this->form_validation->run() == FALSE){
+			$this->load->view('preprocess');
+		} else {
+			$post = $this->input->post();
+
+			$cmd = '';
+
+			if($post['tokenize'] != null){
+			}
+		}
 	}
 
 	public function do_upload(){
