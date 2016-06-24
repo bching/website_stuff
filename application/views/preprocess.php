@@ -1,90 +1,26 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<script type="text/javascript">
-document.addEventListener("DOMContentLoaded", function(event){
-	console.log("DOM fully loaded and parsed");
+<script type="text/javascript" src="<?php echo asset_url(); ?>js/active_preprocess.js"></script>
 
-	var active_dropdowns = document.getElementsByClassName("dropdown");
+<link rel="stylesheet" href="<?php echo asset_url(); ?>css/menuStyle.css" type="text/css" />
 
-	for(var i = 0; i < active_dropdowns.length; i++){
-		active_dropdowns[i].addEventListener("change", checkDropdowns, false);
-	}
-});
-
-//var active_dropdowns = document.querySelectorAll('[data-active="true"]');
-
-function checkDropdowns(){
-	var sent_dropdown = document.getElementById('sent_split');
-	var pos_dropdown = document.getElementById('pos_tag');
-
-	switch(this.id){
-
-	case 'tokenize':
-		if(sent_dropdown.dataset.active == "false" && this.value != ''){
-			var values = ['', 'corenlp', 'nltk', 'spacy'];
-			var options = ['Sentence Split', 'CoreNLP', 'NLTK', 'spaCy'];
-
-			for(var i = 0; i < options.length; i++){
-				var option = options[i];
-				var value = values[i];
-				var el = document.createElement("option");
-				el.textContent = option;
-				el.value = value;
-				sent_dropdown.appendChild(el);
-			}
-			sent_dropdown.dataset.active = "true";
-			break;
-		} else {
-			sent_dropdown.dataset.active = "false";
-			sent_dropdown.innerHTML = "";
-			break;
-		}
-
-		case 'sent_split':
-			if(pos_dropdown.dataset.active == "false" && 
-				sent_dropdown.dataset.active == "true" && 
-				this.value != ''){
-				var values = ['', 'corenlp', 'nltk', 'spacy'];
-				var options = ['POS Tag', 'CoreNLP', 'NLTK', 'spaCy'];
-
-				for(var i = 0; i < options.length; i++){
-					var option = options[i];
-					var value = values[i];
-					var el = document.createElement("option");
-					el.textContent = option;
-					el.value = value;
-					pos_dropdown.appendChild(el);
-				}
-				pos_dropdown.dataset.active = "true";
-				break;
-			} else {
-				pos_dropdown.dataset.active = "false";
-				pos_dropdown.innerHTML = "";
-				break;
-			}
-
-		case 'pos_tag':
-			var pos_dropdown = document.getElementById('pos_tag');
-			break;
-	}
-}
-</script>
-
-	<link rel="stylesheet" href="/website_stuff/assets/css/menuStyle.css" type="text/css" />
-	<!--<style type="text/javascript" src="<?php echo asset_url() ?>js/preprocess_dropdowns.js"></script>; !-->
 <style>
 .right{
 	position: absolute;
 	right: 200px;
 	border: 3px solid #73AD21;
 }
+
+p{
+	font-size: 80%;
+}
 </style>
 </head>
 <body>
 <?php include 'navi.php'; ?>
 <?php 
-	echo form_open('raw_uploads/preprocess');
+	echo form_open('raw_uploads/preprocess', '', array('file_name' => $file_name));
 	$fattr = array(
 		'name' => 'raw_textbox',
 		'value' => $raw_text,
@@ -92,58 +28,102 @@ function checkDropdowns(){
 		'cols' => '50');
 	echo form_textarea($fattr);
 ?>
-<textarea class="right" name="preprocessed_text" value='' rows='30' cols='50'></textarea>
+	<textarea class="right" name="preprocessed_text" value='' rows='30' cols='50'>
+<?php echo $output;?></textarea>
 <br/>
-<?php
 
+<?php echo validation_errors(); ?>
+<div id="preprocess_dropdowns">
+<?php 
+	echo form_dropdown('tokenize',
+	array(
+		'' => 'Tokenize',
+		'corenlp' => 'CoreNLP',
+		'nltk' => 'NLTK',
+		'spacy' => 'spaCy'),
+	'',
+	array(
+		'name' => 'tokenize',
+		'id' => 'tokenize',
+		'class' => 'preprocess',
+		'data-active' => 'true'));
+//	echo form_dropdown('sent_split',
+//		array(),
+//		'',
+//		array(
+//			'id' => 'sent_split',
+//			'class' => 'dropdown',
+//			'data-active' => 'false'));
+	
+	echo "<p id='sent_para' class='initial-hide'>Sentence Split" . 
+		form_checkbox(array(
+			'name' => 'sent_split',
+			'id' => 'sent_split',
+			'value' => '',
+			'class' => 'preprocess',
+			'checked' => FALSE,
+			'data-active' => 'false')) . 
+		"</p>";
+	echo "<p id='pos_stem_para' class='initial-hide'>Choose only one: POS Tag (left) or Stemming<br/>" . 
+		form_checkbox(array(
+			'name' => 'pos_tag',
+			'id' => 'pos_tag',
+			'value' => '',
+			'class' => 'preprocess',
+			'checked' => FALSE,
+			'data-active' => 'false')) . 
+		form_dropdown('stemming',
+			array(),
+			'',
+			array(
+				'name' => 'stemming',
+				'id' => 'stemming',
+				'class' => 'preprocess',
+				'data-active' => 'false')) .
+		"</p>";
+	echo "<p id='lemma_para' class='initial-hide'>Lemmatize" . 
+		form_checkbox(array(
+			'name' => 'lemmatize',
+			'id' => 'lemmatize',
+			'value' => '',
+			'class' => 'preprocess',
+			'checked' => FALSE,
+			'data-active' => 'false')) . 
+		"</p>";
+	echo "<p id='ner_para' class='initial-hide'>Named Entity Recognition" . 
+		form_checkbox(array(
+			'name' => 'ner_tag',
+			'id' => 'ner_tag',
+			'value' => '',
+			'class' => 'preprocess',
+			'checked' => FALSE,
+			'data-active' => 'false')) . 
+		"</p>";
 //	echo form_dropdown('pos_tag',
+//		array(),
+//		'',
 //		array(
-//		'value' => 'POS Tagging',
-//		'corenlp' => 'CoreNLP',
-//		'nltk' => 'NLTK',
-//		'spacy' => 'spaCy',));
-//	
-//	echo form_dropdown('lemma',
+//			'id' => 'pos_tag',
+//			'class' => 'dropdown',
+//			'data-active' => 'false'));
+//	echo form_dropdown('lemmatize',
+//		array(),
+//		'',
 //		array(
-//		'value' => 'Lemmatization',
-//		'corenlp' => 'CoreNLP',
-//		'nltk' => 'NLTK',
-//		'spacy' => 'spaCy',));
-//
-//TODO: Insert the appropriate stemming algorithms
-//	echo form_dropdown('stemming',
-//		array(
-//		'id' => 'sent_split',
-//		'value' => 'Word Stem',
-//		'corenlp' => 'CoreNLP',
-//		'nltk' => 'NLTK',
-//		'spacy' => 'spaCy',));
+//			'id' => 'lemmatize',
+//			'class' => 'dropdown',
+//			'data-active' => 'false'));
 ?>
-	<form>
-		<select id="tokenize" class="dropdown" data-active="true" >
-		<option value="" selected="selected">Tokenization</option>
-		<option value="corenlp">CoreNLP</option>
-		<option value="nltk">NLTK</option>
-		<option value="spacy">spaCy</option>
-		</select>
-	</form>
-	<form>
-		<select id="sent_split" class="dropdown" data-active="false" >
-		</select>
-	</form>
-	<form>
-		<select id="pos_tag" class="dropdown" data-active="false" >
-		</select>
-	</form>
-	<form>
-		<select id="lemmatize" class="dropdown" data-active="false" >
-		</select>
-	</form>
-	<form>
-		<select id="stemming" class="dropdown" data-active="false" >
-		</select>
-	</form>
+<!--	<select id="tokenize" class="dropdown" data-active="true" >
+	<option value="" selected="selected">Tokenization</option>
+	<option value="corenlp">CoreNLP</option>
+	<option value="nltk">NLTK</option>
+	<option value="spacy">spaCy</option>
+	</select>
+!-->
+</div>
 <?php echo form_submit(array('value' => 'Preprocess Text')); ?>
 <?php echo form_close(); ?>
+
 </body>
 </html>

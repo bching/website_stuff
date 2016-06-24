@@ -20,7 +20,7 @@ class Register extends CI_Controller{
 			$this->session->set_flashdata('flash_message', 'Form validation error');
 			redirect(site_url().'register');
 		}
-		//FOrm is filled out properly
+		//Form is filled out properly
 		else{
 			if($this->user->isDuplicate($this->input->post('email'))){
 				$this->session->set_flashdata('flash_message', 'User email already exists');
