@@ -16,6 +16,7 @@ class Register extends CI_Controller{
 		$this->form_validation->set_rules('firstName', 'Firstname', 'required');
 		$this->form_validation->set_rules('lastName', 'Lastname', 'required');
 		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+
 		if($this->form_validation == FALSE){
 			$this->session->set_flashdata('flash_message', 'Form validation error');
 			redirect(site_url().'register');
