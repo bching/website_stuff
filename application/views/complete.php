@@ -20,11 +20,6 @@
 			<?php echo form_error('password'); ?>
 			<?php echo form_input(array('name' => 'passconf', 'id' => 'passconf', 'placeholder' => 'Confirm Password', 'class' => 'form-control', 'value' => set_value('passconf'))); ?>
 			<?php echo form_error('passconf'); ?>
-			<!-- <label for="password">Password:</label>
-			<input type="text" size="25" id="password" name="password"/>
-			<label for="passconf">Re-type your password for confirmation:</label>
-			<input type="text" size="25" id="passconf" name="passconf"/>
-			!-->
 		</div>
 		<?php echo form_hidden('user_id', $user_id); ?>
 		<div class='container'>

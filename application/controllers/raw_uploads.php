@@ -92,8 +92,9 @@ class Raw_uploads extends CI_Controller{
 	 * "<framework> <script> <file_path> <space delimited preprocessing commands>
 	 */
 	public function preprocess(){
-		#Always need to tokenize for any framework
+		//Always need to tokenize for any framework
 		$this->form_validation->set_rules('tokenize', 'Tokenize', 'required');
+		//This path can differ depending on the local environment
 		$path_to_preprocess = '/Applications/MAMP/htdocs/website_stuff/assets/preprocess/';
 
 		if($this->form_validation->run() == FALSE){
@@ -136,7 +137,8 @@ class Raw_uploads extends CI_Controller{
 		$data = $this->session->userdata;
 		$email = $data['email'];
 
-		$config['upload_path'] = '/Users/stc1563/users-uaa/' . $email;
+		//Change upload path specific to local environment
+		$config['upload_path'] = '/Users/jessgrunblatt/users-uaa/' . $email;
 		$config['allowed_types'] = 'txt';
 		$config['max_size'] = '1000000';
 
