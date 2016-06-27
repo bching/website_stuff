@@ -19,8 +19,9 @@ class Raw_uploads extends CI_Controller{
 			//$data = $this->session->userdata;
 			//array_push($data, array('error' => ''));
 
-			//$this->$file_dir = $data['file_dir'];
 			$files = scandir($this->file_dir);
+			//Current and parent directory entries filter
+			$files = array_diff($files, array('.', '..'));
 
 			/*
 			 * I want to encode the file_dir and decode it from the uri read in 
@@ -39,9 +40,7 @@ class Raw_uploads extends CI_Controller{
 	}
 
 	public function display_file(){
-		//$file_dir_token = $this->uri->segment(3);
 		$file = $this->uri->segment(3);
-		//$file_dir = base64_decode($file_dir_token);
 		$file_path = $this->file_dir ."/". $file;
 
 		$file_handle = fopen($file_path, "r");
@@ -166,6 +165,33 @@ class Raw_uploads extends CI_Controller{
 		//		$this->load->view('raw_uploads', $error);
 		//	}
 	}
+
+
+	public function submit_files(){
+		if($this->input->post('file_action') == "delete"){
+			$this->delete_files($this->input->post('checkbox'));
+		} else{
+			$this->batch_preprocess($this->input->post('checkbox'));
+		}
+	}
+
+	public function batch_preprocess($files_to_process){
+	}
+
+	public function delete_files($files_to_delete){
+		if(null != $this->input->post()){
+
+			//$files_to_delete = $this->input->post('checkbox');
+			$file_path = $this->file_dir;
+			
+			foreach($files_to_delete as $file => $file_name){
+				unlink($file_path . '/' . $file_name);
+			}
+
+			redirect('raw_uploads', 'refresh');
+		}
+	}
+
 }
 /* End of file raw_uploads.php */
 /* Location: ./application/controllers/raw_uploads.php */
