@@ -7,46 +7,43 @@ from spacy.en import English
 nlp = English()
 
 def token_process(file_in):
-	_tokens = nlp(unicode(file_in, encoding="utf-8"))
-	return _tokens
+	_doc = nlp(unicode(file_in, encoding="utf-8"))
+	return _doc
 
 def sent_process(file_in):
-	_tokens = nlp(unicode(file_in, encoding="utf-8"))
-	_sents = _tokens.sents
+	_doc = nlp(unicode(file_in, encoding="utf-8"))
+	_sents = _doc.sents
 	return _sents
 
 def pos_process(file_in):
 	_pos_tagged = []
-	_tokens = nlp(unicode(file_in, encoding="utf-8"))
-	for sent in _tokens.sents:
-		for token in sent:
-			token_pos = '{}/{}'.format(token.orth_.encode('ascii', 'ignore'), token.pos_)
-			_pos_tagged.extend(token_pos)
+	_doc = nlp(unicode(file_in, encoding="utf-8"))
+	for token in _doc:
+		token_pos = '{}/{}'.format(token.orth_.encode('ascii', 'ignore'), token.pos_)
+		_pos_tagged.append(token_pos)
 	return _pos_tagged
 
 def lemma_process(file_in):
 	_lemmas = []
-	_tokens = nlp(unicode(file_in, encoding="utf-8"))
-	for sent in _tokens.sents:
-		for token in sent:
-			token_lemma = '{}/{}/{}'.format(token.encode('ascii', 'ignore'), token.lemma_.encode('ascii', 'ignore'), token.pos_)
-			_lemmas.extend(token_lemma)
+	_doc = nlp(unicode(file_in, encoding="utf-8"))
+	for token in _doc:
+		token_lemma = '{}/{}/{}'.format(token.encode('ascii', 'ignore'), token.lemma_.encode('ascii', 'ignore'), token.pos_)
+		_lemmas.append(token_lemma)
 	return _lemmas
 
 def ner_process(file_in):
 	_ner_tagged = []
-	_tokens = nlp(unicode(file_in, encoding="utf-8"))
-	for sent in _tokens.sents:
-		for token in sent:
-			if token.ent_type_ != "":
-				token_ner = '{}/{}/{}/{}'.format(token.encode('ascii', 'ignore'), token.lemma_.encode('ascii', 'ignore'), token.pos_, '_')
-			else:
-				token_ner = '{}/{}/{}/{}'.format(token.encode('ascii', 'ignore'), token.lemma_.encode('ascii', 'ignore'), token.pos_, token.ent_type_)
-			_ner_tagged.extend(token_ner)
+	_doc = nlp(unicode(file_in, encoding="utf-8"))
+	for token in _doc:
+		if token.ent_type_ != "":
+			token_ner = '{}/{}/{}/{}'.format(token.encode('ascii', 'ignore'), token.lemma_.encode('ascii', 'ignore'), token.pos_, '_')
+		else:
+			token_ner = '{}/{}/{}/{}'.format(token.encode('ascii', 'ignore'), token.lemma_.encode('ascii', 'ignore'), token.pos_, token.ent_type_)
+		_ner_tagged.append(token_ner)
 	return _ner_tagged
 
 def main():
-	tokens = []
+	doc = []
 	sents = []
 	pos_tagged = []
 	lemmas = []
@@ -63,9 +60,8 @@ def main():
 		sys.exit()
 
 	if sys.argv[-1] == 'tokenize':
-		tokens = token_process(file)
-		print tokens
-		for token in tokens:
+		doc = token_process(file)
+		for token in doc:
 			print token
 
 	elif sys.argv[-1] == 'sent_split':
@@ -76,17 +72,17 @@ def main():
 	elif sys.argv[-1] == 'pos_tag':
 		pos_tagged = pos_process(file)
 		for pos in pos_tagged:
-			print ' '.join(pos)
-		
+			print pos 
+
 	elif sys.argv[-1] == 'lemmatize':
 		lemmas = lemma_process(file)
 		for lemma in lemmas:
-			print ' '.join(lemma)
+			print lemma
 
 	elif sys.argv[-1] == 'ner_tag':
 		ner_tagged = ner_process(file)
 		for ner in ner_tagged:
-			print ' '.join(ner)
+			print ner
 
 #BEGIN PREPROCESSING EXECUTION
 main()

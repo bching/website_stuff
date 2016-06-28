@@ -52,9 +52,9 @@ class Complete extends CI_Controller{
 			$cleanPost['password'] = $hashed;
 			unset($cleanPost['passconf']);
 
-			//$dir_path = '/Applications/MAMP/htdocs/website_stuff/application/users' . $user_info->email;
-			//$dir_path = $_SERVER["DOCUMENT_ROOT"] .'/'. $user_info->email;
-			$dir_path = '/Users/stc1563/users-uaa/' . $user_info->email;
+			$data = $this->session->userdata;
+			$dir_path = $data['file_dir'];
+			//$dir_path = '/Users/stc1563/users-uaa/' . $user_info->email;
 
 			$userInfo = $this->user->updateUserInfo($cleanPost, $dir_path);
 			if(!$userInfo){
