@@ -15,13 +15,6 @@ class Raw_uploads extends CI_Controller{
 
 	public function index(){
 		if($this->session->userdata('logged_in')){
-			//$session_data = $this->session->userdata('logged_in');
-			//$data = $this->session->userdata;
-			//array_push($data, array('error' => ''));
-
-			//$files = scandir($this->file_dir);
-			//Current and parent directory entries filter
-			//$files = array_diff($files, array('.', '..'));
 			$files = array_filter(scandir($this->file_dir), function($item){
 				return !is_dir($this->file_dir.'/' . $item);
 			});
@@ -81,14 +74,10 @@ class Raw_uploads extends CI_Controller{
 	 * "<framework> <script> <file_path> <space delimited preprocessing commands>
 	 */
 	public function preprocess(){
-		#Always need to tokenize before any text preprocessing
+		//Always need to tokenize for any framework
 		$this->form_validation->set_rules('tokenize', 'Tokenize', 'required');
-		
-		//$path_to_preprocess = asset_url() . 'preprocess/';
-		//I am not sure if there are more elegant solutions, but I had to hard code
-		//the path to the framework scripts rather than using our helper method 'asset_url()
-		//as asset_url() only seems to apply to the web side
-		$preprocess_path = '/Applications/MAMP/htdocs/website_stuff/assets/preprocess/';
+		//This path can differ depending on the local environment
+		$path_to_preprocess = '/Applications/MAMP/htdocs/website_stuff/assets/preprocess/';
 
 		if($this->form_validation->run() == FALSE){
 			$this->session->set_flashdata('flash_message', 'Validation error');

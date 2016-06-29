@@ -77,7 +77,7 @@ class User extends CI_Model{
 			echo $error['message'];
 			return false;
 		}
-		if(!@mkdir($dir . '/raw_uploads', 0777)){
+		if(!@mkdir($dir . '/raw', 0777)){
 			$error = error_get_last();
 			echo $error['message'];
 			return false;

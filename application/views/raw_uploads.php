@@ -21,37 +21,6 @@ if(!empty($message['flash_message'])){
 echo validation_errors();
 ?>
 
-<!-- <select id="upload_input_increase" class="dropdown" > !-->
-<?php
-//	echo "<option value='1' class='upload_clone' data-range='1' selected='selected'>1</option>";
-//	for($i = 2; $i < 11; $i++){
-//		echo "<option value='".$i."' class='upload_clone' data-range='2-10'>".$i."</option>";
-//	}
-?>	
-<!-- </select> !-->
-
-<!-- <script>
-	document.addEventListener("DOMContentLoaded", function(event){
-		console.log("DOM fully loaded and parsed.");
-
-		var uploadInputCount = document.getElementById("upload_input_increase");
-		uploadInputCount.addEventListener("change", alterUploadInput, false);
-	});
-
-	function alterUploadInput(){
-		console.log("Trying to alter");
-		if(this.value > 1){
-			console.log("Value is greater than 1");
-			var originalInput = document.getElementById("upload_form");
-			var uploadArea= document.getElementById("upload_area");
-			for(var i = 0; i < this.value; i++){
-				var newInput = originalInput.cloneNode(true);
-				uploadArea.appendChild(newInput);
-			}
-		}
-	}
-</script> !-->
-
 <?php echo form_open_multipart('raw_uploads/upload_text'); ?>
 <div id="upload_area">
 	<div class="upload_form" id="upload_form">
@@ -61,12 +30,9 @@ echo validation_errors();
 </div>
 </form>
 
-
 <?php 
 	echo '<ul>';
-//echo form_open('raw_uploads/delete_text');
 	echo '<form id="checkbox_form" name="checkbox_form" method="post" action="raw_uploads/submit_files">';
-
 
 	foreach($files as $file => $file_name){
 
