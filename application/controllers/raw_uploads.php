@@ -15,7 +15,7 @@ class Raw_uploads extends CI_Controller{
 
 	public function index(){
 		if($this->session->userdata('logged_in')){
-			$files = array_filter(scandir($this->file_dir), function($item){
+			$files = array_filter(scandir($this->file_dir. '/raw'), function($item){
 				return !is_dir($this->file_dir.'/' . $item);
 			});
 
@@ -28,7 +28,7 @@ class Raw_uploads extends CI_Controller{
 
 	public function display_file(){
 		$file = $this->uri->segment(3);
-		$file_path = $this->file_dir ."/". $file;
+		$file_path = $this->file_dir ."/raw/". $file;
 
 		$file_handle = fopen($file_path, "r");
 		$file_contents = fread($file_handle, filesize($file_path));
@@ -44,7 +44,22 @@ class Raw_uploads extends CI_Controller{
 	public function build_command($framework, $post){
 		$cmd = '';
 		if($framework == 'corenlp'){
-			return;
+			if($post['tokenize'] != ''){
+				$cmd .= 'tokenize,';
+			}
+			if($post['sent_split'] != ''){
+				$cmd .= 'ssplit,';
+			}
+			if($post['pos_tag'] != ''){
+				$cmd .= 'pos,';
+			}
+			if($post['lemmatize'] != ''){
+				$cmd .= 'lemma,';
+			}
+			if($post['ner_tag'] != ''){
+				$cmd .= 'ner';
+			}
+			return $cmd;
 		}
 		else if($framework == 'nltk'){
 			return;
@@ -69,10 +84,6 @@ class Raw_uploads extends CI_Controller{
 		}
 	}
 
-	/*
-	 * The string command executed by shell_exec() is of the form 
-	 * "<framework> <script> <file_path> <space delimited preprocessing commands>
-	 */
 	public function preprocess(){
 		//Always need to tokenize for any framework
 		$this->form_validation->set_rules('tokenize', 'Tokenize', 'required');
@@ -86,12 +97,16 @@ class Raw_uploads extends CI_Controller{
 			$post = $this->input->post();
 
 			$file_path = $this->file_dir . '/'. $post['file_name'];
-			//$file_path = '/Users/stc1563/users-uaa/' . $post['file_name'];
-			$cmd = '';
 			$output = '';
 
 			if($post['tokenize'] == 'corenlp'){
-				//TODO: Insert command for running CoreNLP file from cmd line
+				$cmd = 'java -cp ' . $preprocess_path . 'corenlp/* -Xmx2000m edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators ';
+				$cmd .= $this->build_command('corenlp', $post);
+				$cmd .= ' -file ' .$this->file_dir;
+				$output = shell_exec($cmd);
+				if($output == ''){
+					$output = "corenlp preprocessing failed";
+				}
 			}
 			else if($post['tokenize'] == 'nltk'){
 				//TODO: Insert command for running NLTK file from cmd line
@@ -99,27 +114,21 @@ class Raw_uploads extends CI_Controller{
 			else if($post['tokenize'] == 'spacy'){
 				$cmd = 'python ' . $preprocess_path . 'spacy/spacyNlp.py ' . $this->file_dir;
 				$cmd .= $this->build_command('spacy', $post);
-
 				$output = shell_exec($cmd);
 				if($output == ''){
 					$output = "spacy preprocessing failed";
 					//$output = $cmd;
 				}
-
-				$data = array('output' => $output, 'raw_text' => $post['raw_textbox'], 'file_name' => $post['file_name']);
-				$this->load->view('preprocess', $data);
-				
 			}
+
+			$data = array('output' => $output, 'raw_text' => $post['raw_textbox'], 'file_name' => $post['file_name']);
+			$this->load->view('preprocess', $data);
 		}
 	}
 
-	//Load userdata to provide email in upload_path
-	//Set $config parameters to restrict possible file uploads
-	//Iterate over all uploaded files posted from $_FILES
 	public function upload_text(){
 		$data = $this->session->userdata;
-		$email = $data['email'];
-		$file_dir = $data['file_dir'];
+		$file_dir = $data['file_dir'] . '/raw';
 
 		$config['upload_path'] = $file_dir;
 		$config['allowed_types'] = 'txt';
@@ -145,7 +154,8 @@ class Raw_uploads extends CI_Controller{
 				$this->load->view('raw_uploads', $error);
 			}
 		}
-		redirect('raw_uploads', 'refresh');
+		//redirect('raw_uploads', 'refresh');
+		$this->index();
 	}
 
 	public function submit_files(){
@@ -161,8 +171,7 @@ class Raw_uploads extends CI_Controller{
 		if($this->form_validation->run() == FALSE){
 
 			$this->session->set_flashdata('flash_message', 'Need at least Tokenization');
-			$this->load->view('raw_uploads');
-
+			$this->index();
 		} else{
 			$post = $this->input->post();
 
@@ -170,7 +179,7 @@ class Raw_uploads extends CI_Controller{
 				$preprocess_path = '/Applications/MAMP/htdocs/website_stuff/assets/preprocess/';
 				$output = '';
 
-				$file_path = $this->file_dir . '/' . $file_name;
+				$file_path = $this->file_dir . '/raw/' . $file_name;
 
 				if($post['stemming'] != null){
 					if($post['stemming'] == 'porter'){

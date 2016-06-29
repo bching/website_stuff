@@ -19,7 +19,7 @@
 			'checked' => FALSE
 		));
 
-		$url = site_url() . '/preprocessed_uploads/display_files/' . $file_name;
+		$url = site_url() . '/preprocessed_uploads/display_file/' . $file_name;
 		echo '<a href="' .$url. '">' .$file_name. '</a><br/>';
 	}
 

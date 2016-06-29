@@ -54,7 +54,7 @@ class Complete extends CI_Controller{
 
 			$data = $this->session->userdata;
 			//This directory path will be different on other systems i.e. server username's directory
-			$dir_path = '/Users/stc1563/users-uaa/' . $user_info->email;
+			$dir_path = '/Users/jessgrunblatt/users-uaa/' . $user_info->email;
 
 			$userInfo = $this->user->updateUserInfo($cleanPost, $dir_path);
 			if(!$userInfo){

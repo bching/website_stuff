@@ -26,6 +26,7 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 *.sublime-workspace
 *.sublime-project
 
+/assets/preprocess/
 
 ##vim open text files
 *.swp
