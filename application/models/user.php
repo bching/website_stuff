@@ -77,6 +77,21 @@ class User extends CI_Model{
 			echo $error['message'];
 			return false;
 		}
+		if(!@mkdir($dir . '/raw_uploads', 0777)){
+			$error = error_get_last();
+			echo $error['message'];
+			return false;
+		}
+		if(!@mkdir($dir . '/preprocessed', 0777)){
+			$error = error_get_last();
+			echo $error['message'];
+			return false;
+		}
+		if(!@mkdir($dir . '/semantic_networks', 0777)){
+			$error = error_get_last();
+			echo $error['message'];
+			return false;
+		}
 		umask($oldmask);
 		
 		$data = array(

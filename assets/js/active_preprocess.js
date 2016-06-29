@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function(event){
 	for(var i = 0; i < preprocesses.length; i++){
 		preprocesses[i].addEventListener("change", checkProcesses, false);
 	}
-	var hidden = document.getElementsByClassName("initial-hide");
+	var hidden = document.querySelectorAll('[data-active=false]');
 	for(var i = 0; i < hidden.length; i++){
 		hidden[i].style.visibility = 'hidden';
 	}
@@ -23,130 +23,128 @@ function checkProcesses(){
 	var ner = document.getElementById('ner_tag');
 
 	switch(this.id){
-
 		case 'tokenize':
 			if(sent.dataset.active == 'false'){ 
 				if(this.value == 'corenlp'){
-					sent.value = 'corenlp';
+					var option = 'CoreNLP';
+					var value = 'corenlp';
+					var el = document.createElement("option");
+					el.textContent = option;
+					el.value = value;
+					sent.appendChild(el);
 				}
 				else if(this.value == 'nltk'){
-					sent.value = 'nltk';
+					var option = 'NLTK';
+					var value = 'nltk';
+					var el = document.createElement("option");
+					el.textContent = option;
+					el.value = value;
+					sent.appendChild(el);
 				}
 				else if(this.value == 'spacy'){
-					sent.value = 'spacy';
+					var option = 'spaCy';
+					var value = 'spacy';
+					var el = document.createElement("option");
+					el.textContent = option;
+					el.value = value;
+					sent.appendChild(el);
 				}
-				document.getElementById('sent_para').style.visibility = 'visible';
+				sent.style.visibility = 'visible';
+				sent.dataset.active = 'true';
 			}
 			break;
 
 		case 'sent_split':
-			if(pos.dataset.active == 'false' && stem.dataset.active == 'false'){ 
-				var options = ['Stemming', 'Porter', 'Lancaster', 'Porter2'];
-				var values = ['', 'porter', 'lancaster', 'porter2'];
-				
-				for(var i = 0; i < options.length; i++){
-					var option = options[i];
-					var value = values[i];
+			if(pos.dataset.active == 'false'){ 
+				if(this.value == 'corenlp'){
+					var option = 'CoreNLP';
+					var value = 'corenlp';
 					var el = document.createElement("option");
 					el.textContent = option;
 					el.value = value;
-					stem.appendChild(el);
-				}
-				
-				if(this.value == 'corenlp'){
-					pos.value = 'corenlp';
+					pos.appendChild(el);
 				}
 				else if(this.value == 'nltk'){
-					pos.value = 'nltk';
+					var option = 'NLTK';
+					var value = 'nltk';
+					var el = document.createElement("option");
+					el.textContent = option;
+					el.value = value;
+					pos.appendChild(el);
 				}
 				else if(this.value == 'spacy'){
-					pos.value = 'spacy';
+					var option = 'spaCy';
+					var value = 'spacy';
+					var el = document.createElement("option");
+					el.textContent = option;
+					el.value = value;
+					pos.appendChild(el);
 				}
-				document.getElementById('pos_stem_para').style.visibility = 'visible';
+				pos.style.visibility = 'visible';
+				pos.dataset.active = 'true';
 			}
 			break;
 
 		case 'pos_tag':
 			if(lemma.dataset.active == 'false'){
 				if(this.value == 'corenlp'){
-					lemma.value = 'corenlp';
+					var option = 'CoreNLP';
+					var value = 'corenlp';
+					var el = document.createElement("option");
+					el.textContent = option;
+					el.value = value;
+					lemma.appendChild(el);
 				}
 				else if(this.value == 'nltk'){
-					lemma.value = 'nltk';
+					var option = 'NLTK';
+					var value = 'nltk';
+					var el = document.createElement("option");
+					el.textContent = option;
+					el.value = value;
+					lemma.appendChild(el);
 				}
 				else if(this.value == 'spacy'){
-					lemma.value = 'spacy';
+					var option = 'spaCy';
+					var value = 'spacy';
+					var el = document.createElement("option");
+					el.textContent = option;
+					el.value = value;
+					lemma.appendChild(el);
 				}
-				document.getElementById('lemma_para').style.visibility = 'visible';
+				lemma.style.visibility = 'visible';
+				lemma.dataset.active = 'true';
 			}
 			break;
 
 		case 'lemmatize':
 			if(ner.dataset.active == 'false'){
 				if(this.value == 'corenlp'){
-					ner.value = 'corenlp';
+					var option = 'CoreNLP';
+					var value = 'corenlp';
+					var el = document.createElement("option");
+					el.textContent = option;
+					el.value = value;
+					ner.appendChild(el);
 				}
 				else if(this.value == 'nltk'){
-					ner.value = 'nltk';
+					var option = 'NLTK';
+					var value = 'nltk';
+					var el = document.createElement("option");
+					el.textContent = option;
+					el.value = value;
+					ner.appendChild(el);
 				}
 				else if(this.value == 'spacy'){
-					ner.value = 'spacy';
+					var option = 'spaCy';
+					var value = 'spacy';
+					var el = document.createElement("option");
+					el.textContent = option;
+					el.value = value;
+					ner.appendChild(el);
 				}
-				document.getElementById('ner_para').style.visibility = 'visible';
+				ner.style.visibility = 'visible';
+				ner.dataset.active = 'true';
 			}
 			break;
-/* 
- * Below is older code for implementing the preprocesses as a dropdown selection
- * That brought up issues with mix and matching acceptable framework input and outputs
- * which may be more trouble than it is worth
- */
-//
-//	case 'tokenize':
-//		if(sent_dropdown.dataset.active == "false" && this.value != ''){
-//			var values = ['', 'corenlp', 'nltk', 'spacy'];
-//			var options = ['Sentence Split', 'CoreNLP', 'NLTK', 'spaCy'];
-//
-//			for(var i = 0; i < options.length; i++){
-//				var option = options[i];
-//				var value = values[i];
-//				var el = document.createElement("option");
-//				el.textContent = option;
-//				el.value = value;
-//				sent_dropdown.appendChild(el);
-//			}
-//			sent_dropdown.dataset.active = "true";
-//			break;
-//		} else {
-//			sent_dropdown.dataset.active = "false";
-//			sent_dropdown.innerHTML = "";
-//			break;
-//		}
-//
-//		case 'sent_split':
-//			if(pos_dropdown.dataset.active == "false" && 
-//				sent_dropdown.dataset.active == "true" && 
-//				this.value != ''){
-//				var values = ['', 'corenlp', 'nltk', 'spacy'];
-//				var options = ['POS Tag', 'CoreNLP', 'NLTK', 'spaCy'];
-//
-//				for(var i = 0; i < options.length; i++){
-//					var option = options[i];
-//					var value = values[i];
-//					var el = document.createElement("option");
-//					el.textContent = option;
-//					el.value = value;
-//					pos_dropdown.appendChild(el);
-//				}
-//				pos_dropdown.dataset.active = "true";
-//				break;
-//			} else {
-//				pos_dropdown.dataset.active = "false";
-//				pos_dropdown.innerHTML = "";
-//				break;
-//			}
-//
-//		case 'pos_tag':
-//			var pos_dropdown = document.getElementById('pos_tag');
-//			break;
 	}
 }

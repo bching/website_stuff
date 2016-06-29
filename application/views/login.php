@@ -8,10 +8,11 @@
 </head>
 <body>
 	<h1>UAA NLP Tools</h1>
-	<?php echo validation_errors(); ?>
-	<?php $fattr = array('class' => 'form-signin');
-		echo form_open('login/verifylogin', $fattr);
-	?>
+<?php 
+	echo validation_errors(); 
+	$fattr = array('class' => 'form-signin');
+	echo form_open('login/verifylogin', $fattr);
+?>
 		<fieldset>
 			<legend>Login</legend>
 			<div class='container'>

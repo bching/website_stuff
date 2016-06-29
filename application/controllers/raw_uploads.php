@@ -19,18 +19,12 @@ class Raw_uploads extends CI_Controller{
 			//$data = $this->session->userdata;
 			//array_push($data, array('error' => ''));
 
-			$files = scandir($this->file_dir);
+			//$files = scandir($this->file_dir);
 			//Current and parent directory entries filter
-			$files = array_diff($files, array('.', '..'));
-
-			/*
-			 * I want to encode the file_dir and decode it from the uri read in 
-			 * display_file so we don't expose directory structure to user 
-			 */
-			//$file_dir_token = base64_encode($file_dir);
-			//$file_dir_token = rtrim($file_dir_token, '=');
-			//$user_info = array('files' => $files, 
-			//	'file_dir_token' => $file_dir_token);
+			//$files = array_diff($files, array('.', '..'));
+			$files = array_filter(scandir($this->file_dir), function($item){
+				return !is_dir($this->file_dir.'/' . $item);
+			});
 
 			$error = '';
 			$user_info = array('files' => $files, 'error' => $error);
@@ -51,13 +45,9 @@ class Raw_uploads extends CI_Controller{
 			'output' => '',
 			'file_name' => $file);
 
-		//Pass token containing path to file once more for processing
-		//$url = site_url() . '/raw_uploads/preprocess/' . $file_dir_token;
-		//$method_token = 'preprocess/' . $file_dir_token;
 		$this->load->view('preprocess', $text_data);
 	}
 
-	//TODO: The file needs to be passed in as an argument for the spacyNlp.py file to read as a sysarg
 	public function build_command($framework, $post){
 		$cmd = '';
 		if($framework == 'corenlp'){
@@ -67,19 +57,19 @@ class Raw_uploads extends CI_Controller{
 			return;
 		}
 		else if($framework == 'spacy'){
-			if(isset($post['tokenize']) == true){
+			if($post['tokenize'] != ''){
 				$cmd .= ' tokenize';
 			}
-			if(isset($post['sent_split']) == true){
+			if($post['sent_split'] != ''){
 				$cmd .= ' sent_split';
 			}
-			if(isset($post['pos_tag']) == true){
+			if($post['pos_tag'] != ''){
 				$cmd .= ' pos_tag';
 			}
-			if(isset($post['lemmatize']) == true){
+			if($post['lemmatize'] != ''){
 				$cmd .= ' lemmatize';
 			}
-			if(isset($post['ner_tag']) == true){
+			if($post['ner_tag'] != ''){
 				$cmd .= ' ner_tag';
 			}
 			return $cmd;
@@ -102,7 +92,8 @@ class Raw_uploads extends CI_Controller{
 		} else {
 			$post = $this->input->post();
 
-			$file_path = $this->file_dir .'/'. $post['file_name'];
+			$file_path = $this->file_dir . '/'. $post['file_name'];
+			//$file_path = '/Users/stc1563/users-uaa/' . $post['file_name'];
 			$cmd = '';
 			$output = '';
 
@@ -113,13 +104,13 @@ class Raw_uploads extends CI_Controller{
 				//TODO: Insert command for running NLTK file from cmd line
 			}
 			else if($post['tokenize'] == 'spacy'){
-				$cmd = 'python ' . $path_to_preprocess . 'spacy/spacyNlp.py ' . $file_path;
-				//TODO: Before attaching commandline arguments need to append local file location
+				$cmd = 'python ' . $preprocess_path . 'spacy/spacyNlp.py ' . $this->file_dir;
 				$cmd .= $this->build_command('spacy', $post);
 
 				$output = shell_exec($cmd);
 				if($output == ''){
 					$output = "spacy preprocessing failed";
+					//$output = $cmd;
 				}
 
 				$data = array('output' => $output, 'raw_text' => $post['raw_textbox'], 'file_name' => $post['file_name']);
@@ -135,9 +126,9 @@ class Raw_uploads extends CI_Controller{
 	public function upload_text(){
 		$data = $this->session->userdata;
 		$email = $data['email'];
+		$file_dir = $data['file_dir'];
 
-		//Change upload path specific to local environment
-		$config['upload_path'] = '/Users/jessgrunblatt/users-uaa/' . $email;
+		$config['upload_path'] = $file_dir;
 		$config['allowed_types'] = 'txt';
 		$config['max_size'] = '1000000';
 
@@ -154,18 +145,15 @@ class Raw_uploads extends CI_Controller{
 			$_FILES['raw_files']['size'] = $files['raw_files']['size'][$i];
 			$_FILES['raw_files']['error'] = $files['raw_files']['error'][$i];
 
-			$this->upload->do_upload('raw_files');
+			if($this->upload->do_upload('raw_files')){
+				$this->session->set_flashdata('flash_message', 'Upload was successful!');
+			} else{
+				$error = array('error' => $this->upload->display_errors());
+				$this->load->view('raw_uploads', $error);
+			}
 		}
 		redirect('raw_uploads', 'refresh');
-		//	if($this->upload->do_upload('raw_files')){
-		//		$this->session->set_flashdata('flash_message', 'Upload was successful!');
-		//		redirect('raw_uploads', 'refresh');
-		//	} else {
-		//		$error = array('error' => $this->upload->display_errors());
-		//		$this->load->view('raw_uploads', $error);
-		//	}
 	}
-
 
 	public function submit_files(){
 		if($this->input->post('file_action') == "delete"){
@@ -175,13 +163,52 @@ class Raw_uploads extends CI_Controller{
 		}
 	}
 
-	public function batch_preprocess($files_to_process){
+	public function batch_preprocess($files){
+		$this->form_validation->set_rules('tokenize', 'Tokenize', 'required');
+		if($this->form_validation->run() == FALSE){
+
+			$this->session->set_flashdata('flash_message', 'Need at least Tokenization');
+			$this->load->view('raw_uploads');
+
+		} else{
+			$post = $this->input->post();
+
+			foreach($files as $file => $file_name){
+				$preprocess_path = '/Applications/MAMP/htdocs/website_stuff/assets/preprocess/';
+				$cmd = '';
+				$output = '';
+
+				$file_path = $this->file_dir . '/' . $file_name;
+
+				if($post['tokenize'] == 'corenlp'){
+					//TODO: Insert command for running CoreNLP file from cmd line
+				}
+				else if($post['tokenize'] == 'nltk'){
+					//TODO: Insert command for running NLTK file from cmd line
+				}
+				else if($post['tokenize'] == 'spacy'){
+					$cmd = 'python ' . $preprocess_path . 'spacy/spacyNlp.py ' . $file_path;
+					$cmd .= $this->build_command('spacy', $post);
+
+					$output = shell_exec($cmd);
+					if($output == ''){
+						$output = "spacy preprocessing failed";
+					}
+
+					if(!file_put_contents($this->file_dir . '/preprocessed/' . $file_name, $output)){
+						$this->session->set_flashdata('flash_message', 'Could not write out file ' . $file_name);
+						$this->load->view('raw_uploads');
+					}
+
+				}
+			}
+			$this->session->set_flashdata('flash_message', 'Saved to Preprocessed');
+			$this->index();
+		}
 	}
 
 	public function delete_files($files_to_delete){
 		if(null != $this->input->post()){
-
-			//$files_to_delete = $this->input->post('checkbox');
 			$file_path = $this->file_dir;
 			
 			foreach($files_to_delete as $file => $file_name){
@@ -191,7 +218,6 @@ class Raw_uploads extends CI_Controller{
 			redirect('raw_uploads', 'refresh');
 		}
 	}
-
 }
 /* End of file raw_uploads.php */
 /* Location: ./application/controllers/raw_uploads.php */
