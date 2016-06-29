@@ -179,12 +179,23 @@ class Raw_uploads extends CI_Controller{
 
 			foreach($files as $file => $file_name){
 				$preprocess_path = '/Applications/MAMP/htdocs/website_stuff/assets/preprocess/';
-				//$file_path = $this->file_dir;
-				//$files_to_process = array();
-				$cmd = '';
 				$output = '';
 
 				$file_path = $this->file_dir . '/' . $file_name;
+
+				if($post['stemming'] != null){
+					if($post['stemming'] == 'porter'){
+					}
+					else if($post['stemming'] == 'porter2'){
+						$cmd = 'java ' . $preprocess_path . 'stem/porter2/SOMETHING HERE ' .$file_path;
+						$output = shell_exec($cmd);
+						if($output == ''){
+							$output = "stemming failed";
+						}
+					}
+					else if($post['stemming'] == 'lancaster'){
+					}
+				}
 
 				if($post['tokenize'] == 'corenlp'){
 					//TODO: Insert command for running CoreNLP file from cmd line
@@ -200,13 +211,13 @@ class Raw_uploads extends CI_Controller{
 					if($output == ''){
 						$output = "spacy preprocessing failed";
 					}
-
-					if(!file_put_contents($this->file_dir . '/preprocessed/' . $file_name, $output)){
-						$this->session->set_flashdata('flash_message', 'Could not write out file ' . $file_name);
-						$this->load->view('raw_uploads');
-					}
-
 				}
+
+				if(!file_put_contents($this->file_dir . '/preprocessed/' . $file_name, $output)){
+					$this->session->set_flashdata('flash_message', 'Could not write out file ' . $file_name);
+					$this->load->view('raw_uploads');
+				}
+
 			}
 			$this->session->set_flashdata('flash_message', 'Saved to Preprocessed');
 			$this->index();

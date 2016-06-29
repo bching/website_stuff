@@ -53,8 +53,8 @@ class Complete extends CI_Controller{
 			unset($cleanPost['passconf']);
 
 			$data = $this->session->userdata;
-			$dir_path = $data['file_dir'];
-			//$dir_path = '/Users/stc1563/users-uaa/' . $user_info->email;
+			//This directory path will be different on other systems i.e. server username's directory
+			$dir_path = '/Users/stc1563/users-uaa/' . $user_info->email;
 
 			$userInfo = $this->user->updateUserInfo($cleanPost, $dir_path);
 			if(!$userInfo){
