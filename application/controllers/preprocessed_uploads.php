@@ -27,6 +27,19 @@ class Preprocessed_uploads extends CI_Controller{
 		}
 	}
 
+	public function display_file(){
+		$file = $this->uri->segment(3);
+		$file_path = $this->file_dir . "/" . $file;
+
+		$file_handle = fopen($file_path, "r");
+		$file_contents = fread($file_handle, filesize($file_path));
+		fclose($file_handle);
+
+		//echo '<p>' .$file_contents. '</p>';
+		echo $file_contents;
+		exit;
+	}
+
 	public function submit_files(){
 		if($this->input->post('file_action') == "delete"){
 			$this->delete_files($this->input->post('checkbox'));
