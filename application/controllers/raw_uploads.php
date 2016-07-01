@@ -119,7 +119,7 @@ class Raw_uploads extends CI_Controller{
 	public function upload_text(){
 		$data = $this->session->userdata;
 		$email = $data['email'];
-		$file_dir = $data['file_dir'];
+		$file_dir = $data['file_dir'] . '/raw';
 
 		$config['upload_path'] = $file_dir;
 		$config['allowed_types'] = 'txt';
@@ -187,7 +187,21 @@ class Raw_uploads extends CI_Controller{
 				}
 
 				if($post['tokenize'] == 'corenlp'){
-					//TODO: Insert command for running CoreNLP file from cmd line
+					/*Very ugly way to write this, if someone can just import
+					 * all the .jar files in some way like this '*.jar' that would
+					 * be great.
+					 */
+					$preprocess_path .= 'corenlp/';
+					$cmd = 'java -cp .:' .$preprocess_path. 'stanford-corenlp-3.6.0.jar:'
+					 	.$preprocess_path. 'stanford-corenlp-3.6.0-models.jar:'
+						.$preprocess_path. 'xom.jar:ejml-0.23.jar:'
+						.$preprocess_path. 'joda-time.jar:'
+						.$preprocess_path. 'jollyday.jar:'
+						.$preprocess_path. 'slf4j-api.jar:'
+						.$preprocess_path. 'slf4j-simple.jar '
+						.$preprocess_path. 'StanfordCoreNlpDemo '
+						.$file_path;
+					$cmd .= $this->build_command('corenlp', $post);
 				}
 				else if($post['tokenize'] == 'nltk'){
 					//TODO: Insert command for running NLTK file from cmd line
@@ -195,11 +209,11 @@ class Raw_uploads extends CI_Controller{
 				else if($post['tokenize'] == 'spacy'){
 					$cmd = 'python ' . $preprocess_path . 'spacy/spacyNlp.py ' . $file_path;
 					$cmd .= $this->build_command('spacy', $post);
+				}
 
-					$output = shell_exec($cmd);
-					if($output == ''){
-						$output = "spacy preprocessing failed";
-					}
+				$output = shell_exec($cmd);
+				if($output == ''){
+					$output = "preprocessing failed";
 				}
 
 				if(!file_put_contents($this->file_dir . '/preprocessed/' . $file_name, $output)){
