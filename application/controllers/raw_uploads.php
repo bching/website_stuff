@@ -45,24 +45,39 @@ class Raw_uploads extends CI_Controller{
 		$cmd = '';
 		if($framework == 'corenlp'){
 			if($post['tokenize'] != ''){
-				$cmd .= 'tokenize,';
+				$cmd .= ' tokenize';
 			}
 			if($post['sent_split'] != ''){
-				$cmd .= 'ssplit,';
+				$cmd .= ' sent_split';
 			}
 			if($post['pos_tag'] != ''){
-				$cmd .= 'pos,';
+				$cmd .= ' pos_tag';
 			}
 			if($post['lemmatize'] != ''){
-				$cmd .= 'lemma,';
+				$cmd .= ' lemmatize';
 			}
 			if($post['ner_tag'] != ''){
-				$cmd .= 'ner';
+				$cmd .= ' ner_tag';
 			}
 			return $cmd;
 		}
 		else if($framework == 'nltk'){
-			return;
+			if($post['tokenize'] != ''){
+				$cmd .= ' tokenize';
+			}
+			if($post['sent_split'] != ''){
+				$cmd .= ' sent_split';
+			}
+			if($post['pos_tag'] != ''){
+				$cmd .= ' pos_tag';
+			}
+			if($post['lemmatize'] != ''){
+				$cmd .= ' lemmatize';
+			}
+			if($post['ner_tag'] != ''){
+				$cmd .= ' ner_tag';
+			}
+			return $cmd;
 		}
 		else if($framework == 'spacy'){
 			if($post['tokenize'] != ''){
@@ -88,7 +103,7 @@ class Raw_uploads extends CI_Controller{
 		//Always need to tokenize for any framework
 		$this->form_validation->set_rules('tokenize', 'Tokenize', 'required');
 		//This path can differ depending on the local environment
-		$path_to_preprocess = '/Applications/MAMP/htdocs/website_stuff/assets/preprocess/';
+		$preprocess_path = '/Applications/MAMP/htdocs/website_stuff/assets/preprocess/';
 
 		if($this->form_validation->run() == FALSE){
 			$this->session->set_flashdata('flash_message', 'Validation error');
@@ -96,28 +111,37 @@ class Raw_uploads extends CI_Controller{
 		} else {
 			$post = $this->input->post();
 
-			$file_path = $this->file_dir . '/'. $post['file_name'];
+			$file_path = $this->file_dir . '/raw/'. $post['file_name'];
 			$output = '';
+			$cmd = '';
 
 			if($post['tokenize'] == 'corenlp'){
-				$cmd = 'java -cp ' . $preprocess_path . 'corenlp/* -Xmx2000m edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators ';
+				$preprocess_path .= 'corenlp/';
+				$cmd .= 'java -cp ' .$preprocess_path. '*:' .$preprocess_path. ' StanfordCoreNlpDemo ' .$file_path;
+				//$cmd = 'java -cp ' . $preprocess_path . 'corenlp/* -Xmx2000m edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators ';
 				$cmd .= $this->build_command('corenlp', $post);
-				$cmd .= ' -file ' .$this->file_dir;
+				//$cmd .= ' -file ' .$this->file_dir;
 				$output = shell_exec($cmd);
 				if($output == ''){
 					$output = "corenlp preprocessing failed";
 				}
 			}
 			else if($post['tokenize'] == 'nltk'){
-				//TODO: Insert command for running NLTK file from cmd line
+				$cmd .= 'python ' . $preprocess_path . 'nltk/nltk-nlp.py ' . $file_path;
+				$cmd .= $this->build_command('nltk', $post);
+
+				$output = shell_exec($cmd);
+				if($output == ''){
+					//$output = "nltk preprocessing failed";
+					$output = $cmd;
+				}
 			}
 			else if($post['tokenize'] == 'spacy'){
-				$cmd = 'python ' . $preprocess_path . 'spacy/spacyNlp.py ' . $this->file_dir;
+				$cmd .= 'python ' . $preprocess_path . 'spacy/spacy-nlp.py ' . $file_path;
 				$cmd .= $this->build_command('spacy', $post);
 				$output = shell_exec($cmd);
 				if($output == ''){
 					$output = "spacy preprocessing failed";
-					//$output = $cmd;
 				}
 			}
 
@@ -168,16 +192,18 @@ class Raw_uploads extends CI_Controller{
 
 	public function batch_preprocess($files){
 		$this->form_validation->set_rules('tokenize', 'Tokenize', 'required');
+		//$this->form_validation->set_rules('raw_files[]', 'raw_files', 'required');
+		$preprocess_path = '/Applications/MAMP/htdocs/website_stuff/assets/preprocess/';
+
 		if($this->form_validation->run() == FALSE){
 
-			$this->session->set_flashdata('flash_message', 'Need at least Tokenization');
+			$this->session->set_flashdata('flash_message', 'Need to select at least tokenization or check at least one file for preprocessing.');
 			$this->index();
 		} else{
 			$post = $this->input->post();
-
 			foreach($files as $file => $file_name){
-				$preprocess_path = '/Applications/MAMP/htdocs/website_stuff/assets/preprocess/';
 				$output = '';
+				$cmd = '';
 
 				$file_path = $this->file_dir . '/raw/' . $file_name;
 
@@ -201,26 +227,34 @@ class Raw_uploads extends CI_Controller{
 					 * be great.
 					 */
 					$preprocess_path .= 'corenlp/';
-					$cmd = 'java -cp .:' .$preprocess_path. 'stanford-corenlp-3.6.0.jar:'
-					 	.$preprocess_path. 'stanford-corenlp-3.6.0-models.jar:'
-						.$preprocess_path. 'xom.jar:ejml-0.23.jar:'
-						.$preprocess_path. 'joda-time.jar:'
-						.$preprocess_path. 'jollyday.jar:'
-						.$preprocess_path. 'slf4j-api.jar:'
-						.$preprocess_path. 'slf4j-simple.jar '
-						.$preprocess_path. 'StanfordCoreNlpDemo '
-						.$file_path;
+					$cmd .= 'java -cp ' .$preprocess_path. '*:' .$preprocess_path. ' StanfordCoreNlpDemo ' .$file_path;
+
+					//$cmd = 'java -cp .:' 
+					//	.$preprocess_path. 'stanford-corenlp-3.6.0.jar:'
+					// 	.$preprocess_path. 'stanford-corenlp-3.6.0-models.jar:'
+					//	.$preprocess_path. 'xom.jar:'
+					//	.$preprocess_path. 'ejml-0.23.jar:'
+					//	.$preprocess_path. 'joda-time.jar:'
+					//	.$preprocess_path. 'jollyday.jar:'
+					//	.$preprocess_path. 'slf4j-api.jar:'
+					//	.$preprocess_path. 'slf4j-simple.jar '
+					//	.$preprocess_path. 'StanfordCoreNlpDemo '
+					//	.$file_path;
 					$cmd .= $this->build_command('corenlp', $post);
 				}
 				else if($post['tokenize'] == 'nltk'){
-					//TODO: Insert command for running NLTK file from cmd line
+					$preprocess_path .= 'nltk/';
+					$cmd .= 'python ' . $preprocess_path . 'nltk-nlp.py ' . $file_path;
+					$cmd .= $this->build_command('nltk', $post);
 				}
 				else if($post['tokenize'] == 'spacy'){
-					$cmd = 'python ' . $preprocess_path . 'spacy/spacyNlp.py ' . $file_path;
+					$preprocess_path .= 'spacy/';
+					$cmd .= 'python ' . $preprocess_path . 'spacy-nlp.py ' . $file_path;
 					$cmd .= $this->build_command('spacy', $post);
 				}
 
 				$output = shell_exec($cmd);
+				
 				if($output == ''){
 					$output = "preprocessing failed";
 				}

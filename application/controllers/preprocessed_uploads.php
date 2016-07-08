@@ -31,12 +31,7 @@ class Preprocessed_uploads extends CI_Controller{
 		$file = $this->uri->segment(3);
 		$file_path = $this->file_dir . "/" . $file;
 
-		$file_handle = fopen($file_path, "r");
-		$file_contents = fread($file_handle, filesize($file_path));
-		fclose($file_handle);
-
-		//echo '<p>' .$file_contents. '</p>';
-		echo $file_contents;
+		echo nl2br(file_get_contents($file_path));
 		exit;
 	}
 

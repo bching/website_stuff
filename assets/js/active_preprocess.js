@@ -16,10 +16,10 @@ document.addEventListener("DOMContentLoaded", function(event){
 //the passed values are validated once more on the server side in the php code,
 //this is mainly for user's ease of use
 function checkProcesses(){
+	var stem = document.getElementById('stemming');
 	var sent = document.getElementById('sent_split');
 	var pos = document.getElementById('pos_tag');
 	var lemma = document.getElementById('lemmatize');
-	var stem = document.getElementById('stemming');
 	var ner = document.getElementById('ner_tag');
 
 	switch(this.id){

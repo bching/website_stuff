@@ -7,38 +7,45 @@ from spacy.en import English
 nlp = English()
 
 def token_process(file_in):
-	_doc = nlp(unicode(file_in, encoding="utf-8"))
+	#_doc = nlp(unicode(file_in, encoding="utf-8"))
+	_doc = nlp(file_in)
 	return _doc
 
 def sent_process(file_in):
-	_doc = nlp(unicode(file_in, encoding="utf-8"))
+	#_doc = nlp(unicode(file_in, encoding="utf-8"))
+	_doc = nlp(file_in)
 	_sents = _doc.sents
 	return _sents
 
 def pos_process(file_in):
 	_pos_tagged = []
-	_doc = nlp(unicode(file_in, encoding="utf-8"))
+	#_doc = nlp(unicode(file_in, encoding="utf-8"))
+	_doc = nlp(file_in)
+#	_doc = _doc.decode("utf-8")
+#	_doc = _doc.encode("ascii", "ignore")
 	for token in _doc:
-		token_pos = '{}/{}'.format(token.orth_.encode('ascii', 'ignore'), token.pos_)
+		token_pos = '{}/{}'.format(token.orth_.encode("ascii", "ignore"), token.pos_)
 		_pos_tagged.append(token_pos)
 	return _pos_tagged
 
 def lemma_process(file_in):
 	_lemmas = []
-	_doc = nlp(unicode(file_in, encoding="utf-8"))
+	#_doc = nlp(unicode(file_in, encoding="utf-8"))
+	_doc = nlp(file_in)
 	for token in _doc:
-		token_lemma = '{}/{}/{}'.format(token.encode('ascii', 'ignore'), token.lemma_.encode('ascii', 'ignore'), token.pos_)
+		token_lemma = '{}/{}/{}'.format(token.orth_.encode("ascii", "ignore"), token.lemma_.encode("ascii", "ignore"), token.pos_)
 		_lemmas.append(token_lemma)
 	return _lemmas
 
 def ner_process(file_in):
 	_ner_tagged = []
-	_doc = nlp(unicode(file_in, encoding="utf-8"))
+	_doc = nlp(file_in)
+	#_doc = nlp(unicode(file_in, encoding="utf-8"))
 	for token in _doc:
 		if token.ent_type_ != "":
-			token_ner = '{}/{}/{}/{}'.format(token.encode('ascii', 'ignore'), token.lemma_.encode('ascii', 'ignore'), token.pos_, '_')
+			token_ner = '{}/{}/{}/{}'.format(token.orth_.encode('ascii', 'ignore'), token.lemma_.encode("ascii", "ignore"), token.pos_, '_')
 		else:
-			token_ner = '{}/{}/{}/{}'.format(token.encode('ascii', 'ignore'), token.lemma_.encode('ascii', 'ignore'), token.pos_, token.ent_type_)
+			token_ner = '{}/{}/{}/{}'.format(token.orth_.encode('ascii', 'ignore'), token.lemma_.encode("ascii", "ignore"), token.pos_, token.ent_type_)
 		_ner_tagged.append(token_ner)
 	return _ner_tagged
 
@@ -48,13 +55,14 @@ def main():
 	pos_tagged = []
 	lemmas = []
 	ner_tagged = []
-	stemmed = []
 
 	file = ''
 	#Read file without line breaks
 	with open(sys.argv[1], 'r') as _file:
 		file = _file.read().replace('\n', ' ')
 	
+	file = unicode(file, encoding="utf-8")
+
 	if file == '':
 		print 'File not read properly'
 		sys.exit()
