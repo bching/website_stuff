@@ -15,6 +15,14 @@ document.addEventListener("DOMContentLoaded", function(event){
 //TODO: need to do more checks to ensure conflicting processes can't occur
 //the passed values are validated once more on the server side in the php code,
 //this is mainly for user's ease of use
+function getSelectedText(elementId){
+	var el = document.getElementById(elementId);
+	if(el.selectedIndex == -1){
+		return null;
+	}
+	return el.options[el.selectedIndex].text;
+}
+
 function checkProcesses(){
 	var stem = document.getElementById('stemming');
 	var sent = document.getElementById('sent_split');
@@ -51,6 +59,19 @@ function checkProcesses(){
 				}
 				sent.style.visibility = 'visible';
 				sent.dataset.active = 'true';
+			} else {
+				var activeProcesses = document.querySelectorAll('[data-active=true]');
+				for(var i = 0; i < activeProcesses.length; i++){
+					if(activeProcesses[i].options[1].text != this.options[this.selectedIndex].text){
+						activeProcesses[i].remove(1);
+						var option = getSelectedText('tokenize');
+						var value = this.value;
+						var el = document.createElement("option");
+						el.text = option;
+						el.value = value;
+						activeProcesses[i].add(el, activeProcesses[i].options[1]);
+					}
+				}
 			}
 			break;
 
