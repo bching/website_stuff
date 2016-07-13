@@ -193,7 +193,6 @@ class Raw_uploads extends CI_Controller{
 	public function batch_preprocess($files){
 		$this->form_validation->set_rules('tokenize', 'Tokenize', 'required');
 		//$this->form_validation->set_rules('raw_files[]', 'raw_files', 'required');
-		$preprocess_path = '/Applications/MAMP/htdocs/website_stuff/assets/preprocess/';
 
 		if($this->form_validation->run() == FALSE){
 
@@ -202,6 +201,8 @@ class Raw_uploads extends CI_Controller{
 		} else{
 			$post = $this->input->post();
 			foreach($files as $file => $file_name){
+
+				$preprocess_path = '/Applications/MAMP/htdocs/website_stuff/assets/preprocess/';
 				$output = '';
 				$cmd = '';
 
@@ -222,24 +223,8 @@ class Raw_uploads extends CI_Controller{
 				}
 
 				if($post['tokenize'] == 'corenlp'){
-					/*Very ugly way to write this, if someone can just import
-					 * all the .jar files in some way like this '*.jar' that would
-					 * be great.
-					 */
 					$preprocess_path .= 'corenlp/';
 					$cmd .= 'java -cp ' .$preprocess_path. '*:' .$preprocess_path. ' StanfordCoreNlpDemo ' .$file_path;
-
-					//$cmd = 'java -cp .:' 
-					//	.$preprocess_path. 'stanford-corenlp-3.6.0.jar:'
-					// 	.$preprocess_path. 'stanford-corenlp-3.6.0-models.jar:'
-					//	.$preprocess_path. 'xom.jar:'
-					//	.$preprocess_path. 'ejml-0.23.jar:'
-					//	.$preprocess_path. 'joda-time.jar:'
-					//	.$preprocess_path. 'jollyday.jar:'
-					//	.$preprocess_path. 'slf4j-api.jar:'
-					//	.$preprocess_path. 'slf4j-simple.jar '
-					//	.$preprocess_path. 'StanfordCoreNlpDemo '
-					//	.$file_path;
 					$cmd .= $this->build_command('corenlp', $post);
 				}
 				else if($post['tokenize'] == 'nltk'){
