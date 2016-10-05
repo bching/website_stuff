@@ -51,6 +51,18 @@ echo validation_errors();
 
 	echo '<button name="file_action" value="batch_preprocess" type="submit">Preprocess</button>';
 
+//	echo form_dropdown('stemming',
+//		array(
+//			'' => 'Stemming',
+//			'porter' => 'Porter',
+//			'porter2' => 'Porter2',
+//			'lancaster' => 'Lancaster'),
+//		'',
+//		array(
+//			'name' => 'stemming',
+//			'id' => 'stemming',
+//			'class' => 'stem',
+//			'data-active' => 'true'));
 	echo form_dropdown('stemming',
 		array(
 			'' => 'Stemming',
@@ -61,8 +73,20 @@ echo validation_errors();
 		array(
 			'name' => 'stemming',
 			'id' => 'stemming',
-			'class' => 'stem',
-			'data-active' => 'true'));
+			'class' => 'stem'
+			));
+//	echo form_dropdown('tokenize',
+//		array(
+//			'' => 'Tokenize',
+//			'corenlp' => 'CoreNLP',
+//			'nltk' => 'NLTK',
+//			'spacy' => 'spaCy'),
+//		'',
+//		array(
+//			'name' => 'tokenize',
+//			'id' => 'tokenize',
+//			'class' => 'preprocess',
+//			'data-active' => 'true'));
 	echo form_dropdown('tokenize',
 		array(
 			'' => 'Tokenize',
@@ -73,8 +97,8 @@ echo validation_errors();
 		array(
 			'name' => 'tokenize',
 			'id' => 'tokenize',
-			'class' => 'preprocess',
-			'data-active' => 'true'));
+			'class' => 'preprocess'
+			));
 	echo form_dropdown('sent_split',
 		array(
 			'' => 'Sentence Split'),
