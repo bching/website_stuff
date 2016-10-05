@@ -43,7 +43,7 @@ class Raw_uploads extends CI_Controller{
 
 	public function build_command($framework, $post){
 		$cmd = '';
-		if($framework == 'corenlp'){
+		if($framework == 'corenlp' || $framework == 'nltk' || $framework == 'spacy'){
 			if($post['tokenize'] != ''){
 				$cmd .= ' tokenize';
 			}
@@ -61,42 +61,42 @@ class Raw_uploads extends CI_Controller{
 			}
 			return $cmd;
 		}
-		else if($framework == 'nltk'){
-			if($post['tokenize'] != ''){
-				$cmd .= ' tokenize';
-			}
-			if($post['sent_split'] != ''){
-				$cmd .= ' sent_split';
-			}
-			if($post['pos_tag'] != ''){
-				$cmd .= ' pos_tag';
-			}
-			if($post['lemmatize'] != ''){
-				$cmd .= ' lemmatize';
-			}
-			if($post['ner_tag'] != ''){
-				$cmd .= ' ner_tag';
-			}
-			return $cmd;
-		}
-		else if($framework == 'spacy'){
-			if($post['tokenize'] != ''){
-				$cmd .= ' tokenize';
-			}
-			if($post['sent_split'] != ''){
-				$cmd .= ' sent_split';
-			}
-			if($post['pos_tag'] != ''){
-				$cmd .= ' pos_tag';
-			}
-			if($post['lemmatize'] != ''){
-				$cmd .= ' lemmatize';
-			}
-			if($post['ner_tag'] != ''){
-				$cmd .= ' ner_tag';
-			}
-			return $cmd;
-		}
+//		else if($framework == 'nltk'){
+//			if($post['tokenize'] != ''){
+//				$cmd .= ' tokenize';
+//			}
+//			if($post['sent_split'] != ''){
+//				$cmd .= ' sent_split';
+//			}
+//			if($post['pos_tag'] != ''){
+//				$cmd .= ' pos_tag';
+//			}
+//			if($post['lemmatize'] != ''){
+//				$cmd .= ' lemmatize';
+//			}
+//			if($post['ner_tag'] != ''){
+//				$cmd .= ' ner_tag';
+//			}
+//			return $cmd;
+//		}
+//		else if($framework == 'spacy'){
+//			if($post['tokenize'] != ''){
+//				$cmd .= ' tokenize';
+//			}
+//			if($post['sent_split'] != ''){
+//				$cmd .= ' sent_split';
+//			}
+//			if($post['pos_tag'] != ''){
+//				$cmd .= ' pos_tag';
+//			}
+//			if($post['lemmatize'] != ''){
+//				$cmd .= ' lemmatize';
+//			}
+//			if($post['ner_tag'] != ''){
+//				$cmd .= ' ner_tag';
+//			}
+//			return $cmd;
+//		}
 	}
 
 	public function preprocess(){
