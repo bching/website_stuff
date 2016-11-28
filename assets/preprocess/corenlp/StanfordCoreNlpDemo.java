@@ -20,6 +20,8 @@ import edu.stanford.nlp.util.*;
 /** This class demonstrates building and using a Stanford CoreNLP pipeline. */
 public class StanfordCoreNlpDemo {
 
+	/** AnnotationClass is for reading in values from the web frontend
+	  so that we know which preprocess methods to run later */
 	static class AnnotationClass{
 		public boolean tokenize;
 		public boolean sentSplit;
@@ -53,15 +55,16 @@ public class StanfordCoreNlpDemo {
 		}
 	}
 
+	/**  Read file bytes and return a string */
 	static String readFile(String path, Charset encoding) throws IOException{
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		return new String(encoded, encoding);
 	}
 
-	/** Usage: java -cp "*" StanfordCoreNlpDemo [inputFile [outputTextFile [outputXmlFile]]] */
+	/** Commandline Usage: java -cp "*" StanfordCoreNlpDemo [inputFile [outputTextFile [outputXmlFile]]] */
 	public static void main(String[] args) throws IOException {
 
-		PrintStream err = System.err;;
+		PrintStream err = System.err;
 		System.setErr(new PrintStream(new OutputStream(){
 			public void write(int b){
 			}
@@ -72,10 +75,11 @@ public class StanfordCoreNlpDemo {
 
 		AnnotationClass activeAnnotations = new AnnotationClass();
 		String annotations = "";
+
 		for(String arg : args){
 			if(arg.equals("tokenize")){
 				annotations += "tokenize";
-				annotations += ", ssplit";
+				//annotations += ", ssplit";
 			} 
 			if(arg.equals("sent_split")){
 				annotations += ", ssplit";
@@ -103,18 +107,29 @@ public class StanfordCoreNlpDemo {
 
 		Properties props = new Properties();
 		//props.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
+
+		/** Passing in a string delimited by a ", " to determine the preprocess methods */
 		props.put("annotators", annotations);
 
+		/** Pass in Properties object into the pipeline object */
 		StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
+		/** Pipeline doesn't read direct string but Annotation document object */
 		Annotation document = new Annotation(fileIn);
 
+		/** Annotate document with set pipeline methods */
 		pipeline.annotate(document);
+
+		/** Retrieve every sentence from document object as Stanfords CoreMap type List */
 		List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
 		if(sentences == null){
 			out.println("NULL");
 		}
 
+		/** These if statements are just checking the activeAnnotations object that
+		 * we set earlier for which booleans were set to true, so that we stdout those into the web frontend 
+		 * For example, if we want the nerTagged document, we iterate through every sentence of the CoreMap sentence List
+		 * and then we iterate through every token of each sentence and are printing out the token as RAWSTRING/POSTAG/NERTAG */
 		if(activeAnnotations.nerTag == true){
 			for(CoreMap sentence : sentences){
 				for (CoreMap token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
@@ -124,7 +139,6 @@ public class StanfordCoreNlpDemo {
 				}
 			}
 		}
-
 		else if(activeAnnotations.lemmatize == true){
 			for(CoreMap sentence : sentences){
 				for (CoreMap token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
@@ -134,7 +148,6 @@ public class StanfordCoreNlpDemo {
 				}
 			}
 		}
-
 		else if(activeAnnotations.posTag == true){
 			for(CoreMap sentence : sentences){
 				for (CoreMap token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
@@ -143,13 +156,11 @@ public class StanfordCoreNlpDemo {
 				}
 			}
 		}
-
 		else if(activeAnnotations.sentSplit == true){
 			for(CoreMap sentence : sentences){
 				out.println(sentence.get(CoreAnnotations.TextAnnotation.class));
 			}
 		}
-
 		else if(activeAnnotations.tokenize == true){
 			for(CoreMap sentence : sentences){
 				for (CoreMap token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
@@ -157,6 +168,7 @@ public class StanfordCoreNlpDemo {
 				}
 			}
 		}
+
 
 		// this prints out the results of sentence analysis to file(s) in good formats
 		/*
